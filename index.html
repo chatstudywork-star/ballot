@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sanrio Lucky Sprint — Spiral Draw</title>
+  <style>
+    :root {
+      --pink: #ff6fae;
+      --deep-pink: #e74491;
+      --cream: #fff9ef;
+      --ink: #51364d;
+      --mint: #d8f7e8;
+      --lavender: #e8ddff;
+      --yellow: #ffe58f;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding: 24px;
+      color: var(--ink);
+      font-family: "Trebuchet MS", system-ui, sans-serif;
+      background:
+        radial-gradient(circle at 12% 18%, #fff 0 5px, transparent 6px),
+        radial-gradient(circle at 85% 77%, #fff 0 6px, transparent 7px),
+        linear-gradient(135deg, #ffd8e9, #e6dcff 55%, #d8f7e8);
+      background-size: 48px 48px, 62px 62px, auto;
+    }
+
+    .app {
+      width: min(100%, 980px);
+      margin: 0 auto;
+      overflow: hidden;
+      border: 5px solid white;
+      border-radius: 30px;
+      background: rgba(255, 249, 239, .96);
+      box-shadow: 0 18px 60px #9b588b35;
+    }
+
+    header {
+      padding: 26px 20px 20px;
+      text-align: center;
+      background: linear-gradient(120deg, #ffb4d2, #ffe9a8, #c6f5df);
+    }
+
+    .eyebrow {
+      margin: 0 0 6px;
+      font-size: .78rem;
+      font-weight: 900;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      color: #a92d70;
+      font-size: clamp(2rem, 6vw, 3.5rem);
+      line-height: 1;
+      text-shadow: 2px 3px 0 white;
+    }
+
+    .subtitle { margin: 12px 0 0; }
+
+    main {
+      display: grid;
+      grid-template-columns: 1fr .85fr;
+      gap: 26px;
+      padding: clamp(18px, 4vw, 36px);
+      align-items: center;
+    }
+
+    .wheel-area { text-align: center; }
+
+    .wheel-frame {
+      position: relative;
+      width: min(78vw, 390px);
+      aspect-ratio: 1;
+      margin: 12px auto 18px;
+      padding: 12px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #ff8fbd, #a98af4, #68d8b0);
+      box-shadow: 0 12px 25px #7a4f6c2a;
+    }
+
+    .pointer {
+      position: absolute;
+      z-index: 3;
+      top: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: #ad3674;
+      font-size: 2.5rem;
+      filter: drop-shadow(0 3px 1px white);
+    }
+
+    .wheel {
+      position: relative;
+      display: grid;
+      place-items: center;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      border: 5px solid white;
+      border-radius: 50%;
+      background: conic-gradient(
+        #ffb3d1 0 40deg, #fff0a8 40deg 80deg,
+        #bcefd7 80deg 120deg, #c9b9ff 120deg 160deg,
+        #ffd0a5 160deg 200deg, #ffb3d1 200deg 240deg,
+        #fff0a8 240deg 280deg, #bcefd7 280deg 320deg,
+        #c9b9ff 320deg 360deg
+      );
+      transition: transform 4.2s cubic-bezier(.12,.72,.08,1);
+    }
+
+    .wheel::before {
+      content: "♡";
+      position: absolute;
+      display: grid;
+      place-items: center;
+      width: 78px;
+      height: 78px;
+      border: 5px solid white;
+      border-radius: 50%;
+      background: #fff9ef;
+      color: var(--deep-pink);
+      font-size: 2.7rem;
+      box-shadow: 0 4px 12px #7a4f6c22;
+    }
+
+    .number {
+      position: absolute;
+      top: 8%;
+      left: 50%;
+      transform-origin: 50% 170px;
+      font-weight: 1000;
+      font-size: clamp(.85rem, 3vw, 1rem);
+      color: #593a62;
+      text-shadow: 0 1px white, 1px 0 white, -1px 0 white;
+    }
+
+    .spin-button, .claim-button {
+      border: 0;
+      border-radius: 999px;
+      padding: 14px 25px;
+      color: white;
+      background: linear-gradient(135deg, #fa5da0, #bd59d5);
+      box-shadow: 0 6px 0 #963b8f;
+      font: inherit;
+      font-weight: 900;
+      letter-spacing: .04em;
+      cursor: pointer;
+      transition: transform .15s, filter .15s;
+    }
+
+    .spin-button:hover, .claim-button:hover { filter: brightness(1.06); transform: translateY(-2px); }
+    .spin-button:active, .claim-button:active { transform: translateY(3px); box-shadow: 0 3px 0 #963b8f; }
+    button:disabled { cursor: wait; opacity: .7; }
+
+    .hint { margin: 14px 0 0; font-size: .88rem; opacity: .8; }
+
+    .panel {
+      padding: 24px;
+      border: 2px dashed #f19bc5;
+      border-radius: 24px;
+      background: white;
+      text-align: center;
+    }
+
+    .panel h2 { margin: 0 0 8px; color: #a92d70; }
+    .panel p { line-height: 1.5; }
+
+    .ticket {
+      display: inline-block;
+      margin: 8px 0 14px;
+      padding: 8px 18px;
+      border-radius: 14px;
+      background: var(--yellow);
+      font-size: 1.25rem;
+      font-weight: 1000;
+    }
+
+    .result {
+      min-height: 155px;
+      margin: 10px 0 16px;
+      padding: 16px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, #fff0f7, #f2edff);
+    }
+
+    .character {
+      font-size: 3.1rem;
+      line-height: 1.1;
+    }
+
+    .result h3 { margin: 7px 0 5px; color: #9e3475; }
+    .result p { margin: 4px 0; font-size: .94rem; }
+
+    .claim-button {
+      width: 100%;
+      background: linear-gradient(135deg, #ff8a55, #f04c9b);
+      box-shadow: 0 6px 0 #bb3973;
+    }
+
+    .claim-button:disabled {
+      background: #c9bdc6;
+      box-shadow: 0 6px 0 #9a8d97;
+    }
+
+    .claim-note { margin: 12px 0 0; font-size: .76rem; opacity: .72; }
+
+    .roster {
+      padding: 0 24px 28px;
+      text-align: center;
+    }
+
+    .roster h2 { margin: 0 0 12px; color: #a92d70; font-size: 1rem; }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .chip {
+      padding: 7px 12px;
+      border: 1px solid #f4c1d8;
+      border-radius: 99px;
+      background: white;
+      font-size: .82rem;
+      font-weight: 800;
+    }
+
+    @media (max-width: 720px) {
+      body { padding: 10px; }
+      main { grid-template-columns: 1fr; gap: 14px; }
+      .wheel-frame { width: min(76vw, 340px); }
+      .number { transform-origin: 50% 145px; }
+      .roster { padding-top: 4px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <p class="eyebrow">A little spin, a lot of sparkle</p>
+      <h1>Sanrio Lucky Sprint</h1>
+      <p class="subtitle">🌸 Spiral Draw Arena 🌸</p>
+    </header>
+
+    <main>
+      <section class="wheel-area" aria-label="Lucky draw wheel">
+        <div class="wheel-frame">
+          <div class="pointer" aria-hidden="true">▼</div>
+          <div class="wheel" id="wheel" aria-label="Prize number wheel">
+            <span class="number" style="transform:translateX(-50%) rotate(0deg)">1004</span>
+            <span class="number" style="transform:translateX(-50%) rotate(40deg)">1005</span>
+            <span class="number" style="transform:translateX(-50%) rotate(80deg)">1006</span>
+            <span class="number" style="transform:translateX(-50%) rotate(120deg)">1007</span>
+            <span class="number" style="transform:translateX(-50%) rotate(160deg)">1046</span>
+            <span class="number" style="transform:translateX(-50%) rotate(200deg)">1103</span>
+            <span class="number" style="transform:translateX(-50%) rotate(240deg)">1113</span>
+            <span class="number" style="transform:translateX(-50%) rotate(280deg)">1131</span>
+            <span class="number" style="transform:translateX(-50%) rotate(320deg)">1132</span>
+          </div>
+        </div>
+        <button class="spin-button" id="spinButton" type="button">✨ SPIN SPIRAL! ✨</button>
+        <p class="hint" id="hint" aria-live="polite">Tap to reveal your lucky number!</p>
+      </section>
+
+      <section class="panel">
+        <h2>🎟️ Your lucky ticket</h2>
+        <p>Spin the wheel and see which character is waiting for you.</p>
+        <div class="ticket" id="ticket">— — — —</div>
+
+        <div class="result" id="result" aria-live="polite">
+          <div class="character">🎀</div>
+          <h3>Ready, set, sparkle!</h3>
+          <p>Your giant plush surprise appears after the spin.</p>
+        </div>
+
+        <button class="claim-button" id="claimButton" type="button" disabled>
+          CLAIM PRIZE
+        </button>
+        <p class="claim-note">Demo game only — claiming reveals an on-screen prize.</p>
+      </section>
+    </main>
+
+    <section class="roster" aria-label="Draw numbers">
+      <h2>Numbers in today’s draw</h2>
+      <div class="chips">
+        <span class="chip">1004</span><span class="chip">1005</span>
+        <span class="chip">1006</span><span class="chip">1007</span>
+        <span class="chip">1046</span><span class="chip">1103</span>
+        <span class="chip">1113</span><span class="chip">1131</span>
+        <span class="chip">1132</span>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const entries = [
+      { number: "1004", name: "Hello Kitty", icon: "🎀", color: "Cherry-red bow" },
+      { number: "1005", name: "My Melody", icon: "🐰", color: "Sweet pink hood" },
+      { number: "1006", name: "Cinnamoroll", icon: "☁️", color: "Cloud-soft blue" },
+      { number: "1007", name: "Kuromi", icon: "💜", color: "Playful purple" },
+      { number: "1046", name: "Pompompurin", icon: "🍮", color: "Pudding-yellow" },
+      { number: "1103", name: "Pochacco", icon: "🐶", color: "Sporty mint" },
+      { number: "1113", name: "Keroppi", icon: "🐸", color: "Froggy green" },
+      { number: "1131", name: "Badtz-Maru", icon: "🐧", color: "Cool monochrome" },
+      { number: "1132", name: "Little Twin Stars", icon: "⭐", color: "Dreamy pastel" }
+    ];
+
+    const wheel = document.getElementById("wheel");
+    const spinButton = document.getElementById("spinButton");
+    const claimButton = document.getElementById("claimButton");
+    const ticket = document.getElementById("ticket");
+    const result = document.getElementById("result");
+    const hint = document.getElementById("hint");
+
+    let chosen = null;
+    let rotation = 0;
+
+    spinButton.addEventListener("click", () => {
+      if (spinButton.disabled) return;
+
+      chosen = entries[Math.floor(Math.random() * entries.length)];
+      spinButton.disabled = true;
+      claimButton.disabled = true;
+      claimButton.textContent = "SPINNING…";
+      hint.textContent = "Round and round the spiral goes!";
+
+      const segmentDegrees = 360 / entries.length;
+      const index = entries.indexOf(chosen);
+      const target = 360 - (index * segmentDegrees + segmentDegrees / 2);
+      rotation += 360 * 6 + target - (rotation % 360);
+
+      wheel.style.transform = `rotate(${rotation}deg)`;
+
+      window.setTimeout(() => {
+        ticket.textContent = chosen.number;
+        result.innerHTML = `
+          <div class="character">${chosen.icon}</div>
+          <h3>${chosen.name} is your lucky buddy!</h3>
+          <p>A giant ${chosen.color} puff toy is waiting in the prize reveal.</p>
+        `;
+        hint.textContent = `Lucky number ${chosen.number} — prize unlocked!`;
+        claimButton.disabled = false;
+        claimButton.textContent = "🎁 CLAIM PRIZE";
+        spinButton.disabled = false;
+      }, 4300);
+    });
+
+    claimButton.addEventListener("click", () => {
+      if (!chosen) return;
+
+      result.innerHTML = `
+        <div class="character">${chosen.icon} 🧸</div>
+        <h3>🎉 WINNER! 🎉</h3>
+        <p><strong>${chosen.name}</strong> giant puff toy revealed!</p>
+        <p>Lucky ticket: <strong>${chosen.number}</strong></p>
+      `;
+      claimButton.textContent = "✨ PRIZE REVEALED ✨";
+      claimButton.disabled = true;
+    });
+  </script>
+</body>
+</html>
