@@ -1,375 +1,1048 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Sanrio Lucky Sprint — Spiral Draw</title>
-  <style>
-    :root {
-      --pink: #ff6fae;
-      --deep-pink: #e74491;
-      --cream: #fff9ef;
-      --ink: #51364d;
-      --mint: #d8f7e8;
-      --lavender: #e8ddff;
-      --yellow: #ffe58f;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sanrio Sprint Spiral Lucky Draw 🌸</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome & Google Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'sanrio-pink': '#FFD1DC',
+                        'sanrio-hotpink': '#FF69B4',
+                        'sanrio-purple': '#E6E6FA',
+                        'sanrio-deep-purple': '#B19FF9',
+                        'sanrio-yellow': '#FFFACD',
+                        'sanrio-mint': '#C1E1C1',
+                        'sanrio-blue': '#B0E0E6',
+                        'sanrio-cream': '#FFFDD0'
+                    },
+                    fontFamily: {
+                        'fredoka': ['"Fredoka One"', 'cursive'],
+                        'quicksand': ['Quicksand', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
 
-    * { box-sizing: border-box; }
+    <style>
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(135deg, #ffe6f0 0%, #f0e6ff 50%, #e6f7ff 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
 
-    body {
-      margin: 0;
-      min-height: 100vh;
-      padding: 24px;
-      color: var(--ink);
-      font-family: "Trebuchet MS", system-ui, sans-serif;
-      background:
-        radial-gradient(circle at 12% 18%, #fff 0 5px, transparent 6px),
-        radial-gradient(circle at 85% 77%, #fff 0 6px, transparent 7px),
-        linear-gradient(135deg, #ffd8e9, #e6dcff 55%, #d8f7e8);
-      background-size: 48px 48px, 62px 62px, auto;
-    }
+        .font-title {
+            font-family: 'Fredoka One', cursive;
+        }
 
-    .app {
-      width: min(100%, 980px);
-      margin: 0 auto;
-      overflow: hidden;
-      border: 5px solid white;
-      border-radius: 30px;
-      background: rgba(255, 249, 239, .96);
-      box-shadow: 0 18px 60px #9b588b35;
-    }
+        /* Sparkle & Ribbon Effects */
+        .sparkle-bg {
+            background-image: radial-gradient(rgba(255, 105, 180, 0.2) 2px, transparent 2px);
+            background-size: 24px 24px;
+        }
 
-    header {
-      padding: 26px 20px 20px;
-      text-align: center;
-      background: linear-gradient(120deg, #ffb4d2, #ffe9a8, #c6f5df);
-    }
+        .kawaii-card {
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(12px);
+            border: 4px solid #FFF;
+            box-shadow: 0 10px 25px -5px rgba(255, 182, 193, 0.5), 0 8px 10px -6px rgba(177, 159, 249, 0.3);
+            border-radius: 2rem;
+        }
 
-    .eyebrow {
-      margin: 0 0 6px;
-      font-size: .78rem;
-      font-weight: 900;
-      letter-spacing: .18em;
-      text-transform: uppercase;
-    }
+        .kawaii-btn {
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 6px 0px #e65c9c, 0 10px 15px rgba(0,0,0,0.1);
+        }
+        .kawaii-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 9px 0px #e65c9c, 0 12px 20px rgba(0,0,0,0.15);
+        }
+        .kawaii-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 3px 0px #e65c9c, 0 5px 10px rgba(0,0,0,0.1);
+        }
 
-    h1 {
-      margin: 0;
-      color: #a92d70;
-      font-size: clamp(2rem, 6vw, 3.5rem);
-      line-height: 1;
-      text-shadow: 2px 3px 0 white;
-    }
+        .kawaii-btn-yellow {
+            box-shadow: 0 6px 0px #e6b800, 0 10px 15px rgba(0,0,0,0.1);
+        }
+        .kawaii-btn-yellow:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 9px 0px #e6b800, 0 12px 20px rgba(0,0,0,0.15);
+        }
+        .kawaii-btn-yellow:active {
+            transform: translateY(3px);
+            box-shadow: 0 3px 0px #e6b800, 0 5px 10px rgba(0,0,0,0.1);
+        }
 
-    .subtitle { margin: 12px 0 0; }
+        /* Ribbon Header */
+        .ribbon-banner {
+            background: linear-gradient(90deg, #ff85a2, #ffacb7);
+            color: white;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(255, 133, 162, 0.4);
+        }
 
-    main {
-      display: grid;
-      grid-template-columns: 1fr .85fr;
-      gap: 26px;
-      padding: clamp(18px, 4vw, 36px);
-      align-items: center;
-    }
+        /* Float Animation */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-8px) rotate(1.5deg); }
+        }
+        .animate-float {
+            animation: float 4s ease-in-out infinite;
+        }
 
-    .wheel-area { text-align: center; }
+        @keyframes pulse-glow {
+            0%, 100% { filter: drop-shadow(0 0 10px rgba(255,182,193,0.8)); }
+            50% { filter: drop-shadow(0 0 25px rgba(255,105,180,1)); }
+        }
+        .glow-effect {
+            animation: pulse-glow 2.5s infinite;
+        }
 
-    .wheel-frame {
-      position: relative;
-      width: min(78vw, 390px);
-      aspect-ratio: 1;
-      margin: 12px auto 18px;
-      padding: 12px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #ff8fbd, #a98af4, #68d8b0);
-      box-shadow: 0 12px 25px #7a4f6c2a;
-    }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #FFE6F0;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #FF99C8;
+            border-radius: 10px;
+        }
 
-    .pointer {
-      position: absolute;
-      z-index: 3;
-      top: -8px;
-      left: 50%;
-      transform: translateX(-50%);
-      color: #ad3674;
-      font-size: 2.5rem;
-      filter: drop-shadow(0 3px 1px white);
-    }
-
-    .wheel {
-      position: relative;
-      display: grid;
-      place-items: center;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      border: 5px solid white;
-      border-radius: 50%;
-      background: conic-gradient(
-        #ffb3d1 0 40deg, #fff0a8 40deg 80deg,
-        #bcefd7 80deg 120deg, #c9b9ff 120deg 160deg,
-        #ffd0a5 160deg 200deg, #ffb3d1 200deg 240deg,
-        #fff0a8 240deg 280deg, #bcefd7 280deg 320deg,
-        #c9b9ff 320deg 360deg
-      );
-      transition: transform 4.2s cubic-bezier(.12,.72,.08,1);
-    }
-
-    .wheel::before {
-      content: "♡";
-      position: absolute;
-      display: grid;
-      place-items: center;
-      width: 78px;
-      height: 78px;
-      border: 5px solid white;
-      border-radius: 50%;
-      background: #fff9ef;
-      color: var(--deep-pink);
-      font-size: 2.7rem;
-      box-shadow: 0 4px 12px #7a4f6c22;
-    }
-
-    .number {
-      position: absolute;
-      top: 8%;
-      left: 50%;
-      transform-origin: 50% 170px;
-      font-weight: 1000;
-      font-size: clamp(.85rem, 3vw, 1rem);
-      color: #593a62;
-      text-shadow: 0 1px white, 1px 0 white, -1px 0 white;
-    }
-
-    .spin-button, .claim-button {
-      border: 0;
-      border-radius: 999px;
-      padding: 14px 25px;
-      color: white;
-      background: linear-gradient(135deg, #fa5da0, #bd59d5);
-      box-shadow: 0 6px 0 #963b8f;
-      font: inherit;
-      font-weight: 900;
-      letter-spacing: .04em;
-      cursor: pointer;
-      transition: transform .15s, filter .15s;
-    }
-
-    .spin-button:hover, .claim-button:hover { filter: brightness(1.06); transform: translateY(-2px); }
-    .spin-button:active, .claim-button:active { transform: translateY(3px); box-shadow: 0 3px 0 #963b8f; }
-    button:disabled { cursor: wait; opacity: .7; }
-
-    .hint { margin: 14px 0 0; font-size: .88rem; opacity: .8; }
-
-    .panel {
-      padding: 24px;
-      border: 2px dashed #f19bc5;
-      border-radius: 24px;
-      background: white;
-      text-align: center;
-    }
-
-    .panel h2 { margin: 0 0 8px; color: #a92d70; }
-    .panel p { line-height: 1.5; }
-
-    .ticket {
-      display: inline-block;
-      margin: 8px 0 14px;
-      padding: 8px 18px;
-      border-radius: 14px;
-      background: var(--yellow);
-      font-size: 1.25rem;
-      font-weight: 1000;
-    }
-
-    .result {
-      min-height: 155px;
-      margin: 10px 0 16px;
-      padding: 16px;
-      border-radius: 20px;
-      background: linear-gradient(135deg, #fff0f7, #f2edff);
-    }
-
-    .character {
-      font-size: 3.1rem;
-      line-height: 1.1;
-    }
-
-    .result h3 { margin: 7px 0 5px; color: #9e3475; }
-    .result p { margin: 4px 0; font-size: .94rem; }
-
-    .claim-button {
-      width: 100%;
-      background: linear-gradient(135deg, #ff8a55, #f04c9b);
-      box-shadow: 0 6px 0 #bb3973;
-    }
-
-    .claim-button:disabled {
-      background: #c9bdc6;
-      box-shadow: 0 6px 0 #9a8d97;
-    }
-
-    .claim-note { margin: 12px 0 0; font-size: .76rem; opacity: .72; }
-
-    .roster {
-      padding: 0 24px 28px;
-      text-align: center;
-    }
-
-    .roster h2 { margin: 0 0 12px; color: #a92d70; font-size: 1rem; }
-
-    .chips {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 8px;
-    }
-
-    .chip {
-      padding: 7px 12px;
-      border: 1px solid #f4c1d8;
-      border-radius: 99px;
-      background: white;
-      font-size: .82rem;
-      font-weight: 800;
-    }
-
-    @media (max-width: 720px) {
-      body { padding: 10px; }
-      main { grid-template-columns: 1fr; gap: 14px; }
-      .wheel-frame { width: min(76vw, 340px); }
-      .number { transform-origin: 50% 145px; }
-      .roster { padding-top: 4px; }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { scroll-behavior: auto !important; }
-    }
-  </style>
+        .modal-blur {
+            backdrop-filter: blur(8px);
+        }
+    </style>
 </head>
-<body>
-  <div class="app">
-    <header>
-      <p class="eyebrow">A little spin, a lot of sparkle</p>
-      <h1>Sanrio Lucky Sprint</h1>
-      <p class="subtitle">🌸 Spiral Draw Arena 🌸</p>
-    </header>
+<body class="sparkle-bg text-gray-700 pb-12">
 
-    <main>
-      <section class="wheel-area" aria-label="Lucky draw wheel">
-        <div class="wheel-frame">
-          <div class="pointer" aria-hidden="true">▼</div>
-          <div class="wheel" id="wheel" aria-label="Prize number wheel">
-            <span class="number" style="transform:translateX(-50%) rotate(0deg)">1004</span>
-            <span class="number" style="transform:translateX(-50%) rotate(40deg)">1005</span>
-            <span class="number" style="transform:translateX(-50%) rotate(80deg)">1006</span>
-            <span class="number" style="transform:translateX(-50%) rotate(120deg)">1007</span>
-            <span class="number" style="transform:translateX(-50%) rotate(160deg)">1046</span>
-            <span class="number" style="transform:translateX(-50%) rotate(200deg)">1103</span>
-            <span class="number" style="transform:translateX(-50%) rotate(240deg)">1113</span>
-            <span class="number" style="transform:translateX(-50%) rotate(280deg)">1131</span>
-            <span class="number" style="transform:translateX(-50%) rotate(320deg)">1132</span>
-          </div>
-        </div>
-        <button class="spin-button" id="spinButton" type="button">✨ SPIN SPIRAL! ✨</button>
-        <p class="hint" id="hint" aria-live="polite">Tap to reveal your lucky number!</p>
-      </section>
-
-      <section class="panel">
-        <h2>🎟️ Your lucky ticket</h2>
-        <p>Spin the wheel and see which character is waiting for you.</p>
-        <div class="ticket" id="ticket">— — — —</div>
-
-        <div class="result" id="result" aria-live="polite">
-          <div class="character">🎀</div>
-          <h3>Ready, set, sparkle!</h3>
-          <p>Your giant plush surprise appears after the spin.</p>
-        </div>
-
-        <button class="claim-button" id="claimButton" type="button" disabled>
-          CLAIM PRIZE
+    <!-- Audio Control Header -->
+    <div class="fixed top-4 right-4 z-40 flex items-center gap-3">
+        <button id="soundToggle" onclick="toggleSound()" class="w-12 h-12 rounded-full bg-white text-sanrio-hotpink shadow-lg flex items-center justify-center text-xl hover:scale-110 transition border-2 border-pink-200">
+            <i class="fas fa-volume-up"></i>
         </button>
-        <p class="claim-note">Demo game only — claiming reveals an on-screen prize.</p>
-      </section>
-    </main>
+    </div>
 
-    <section class="roster" aria-label="Draw numbers">
-      <h2>Numbers in today’s draw</h2>
-      <div class="chips">
-        <span class="chip">1004</span><span class="chip">1005</span>
-        <span class="chip">1006</span><span class="chip">1007</span>
-        <span class="chip">1046</span><span class="chip">1103</span>
-        <span class="chip">1113</span><span class="chip">1131</span>
-        <span class="chip">1132</span>
-      </div>
-    </section>
-  </div>
+    <!-- Main Container -->
+    <div class="max-w-6xl mx-auto px-4 pt-6">
 
-  <script>
-    const entries = [
-      { number: "1004", name: "Hello Kitty", icon: "🎀", color: "Cherry-red bow" },
-      { number: "1005", name: "My Melody", icon: "🐰", color: "Sweet pink hood" },
-      { number: "1006", name: "Cinnamoroll", icon: "☁️", color: "Cloud-soft blue" },
-      { number: "1007", name: "Kuromi", icon: "💜", color: "Playful purple" },
-      { number: "1046", name: "Pompompurin", icon: "🍮", color: "Pudding-yellow" },
-      { number: "1103", name: "Pochacco", icon: "🐶", color: "Sporty mint" },
-      { number: "1113", name: "Keroppi", icon: "🐸", color: "Froggy green" },
-      { number: "1131", name: "Badtz-Maru", icon: "🐧", color: "Cool monochrome" },
-      { number: "1132", name: "Little Twin Stars", icon: "⭐", color: "Dreamy pastel" }
-    ];
+        <!-- Title Header Banner -->
+        <header class="text-center mb-8 relative">
+            <div class="inline-block relative">
+                <div class="ribbon-banner px-8 py-3 rounded-2xl text-2xl md:text-4xl font-title tracking-wide border-4 border-white glow-effect">
+                    🎀 SANRIO SPRINT SPIRAL LUCKY DRAW 🎀
+                </div>
+                <div class="text-sm md:text-base font-bold text-pink-500 mt-2 tracking-wider flex items-center justify-center gap-2 flex-wrap">
+                    <i class="fas fa-sparkles text-yellow-400"></i>
+                    Spin the Spiral Track & Claim Giant Sanrio Puff Toys!
+                    <i class="fas fa-sparkles text-yellow-400"></i>
+                </div>
+                
+                <!-- Character Avatar Header Badges -->
+                <div class="flex items-center justify-center gap-2 mt-3 flex-wrap">
+                    <span class="px-2.5 py-1 bg-white rounded-full text-xs font-bold text-pink-500 shadow-sm border border-pink-100">🎀 Hello Kitty</span>
+                    <span class="px-2.5 py-1 bg-white rounded-full text-xs font-bold text-blue-400 shadow-sm border border-blue-100">☁️ Cinnamoroll</span>
+                    <span class="px-2.5 py-1 bg-white rounded-full text-xs font-bold text-pink-400 shadow-sm border border-pink-100">🌸 My Melody</span>
+                    <span class="px-2.5 py-1 bg-white rounded-full text-xs font-bold text-purple-500 shadow-sm border border-purple-100">💜 Kuromi</span>
+                    <span class="px-2.5 py-1 bg-white rounded-full text-xs font-bold text-amber-500 shadow-sm border border-amber-100">🍮 Pompompurin</span>
+                    <span class="px-2.5 py-1 bg-white rounded-full text-xs font-bold text-teal-600 shadow-sm border border-teal-100">🐶 Pochacco</span>
+                    <span class="px-2.5 py-1 bg-white rounded-full text-xs font-bold text-green-500 shadow-sm border border-green-100">🐸 Keroppi</span>
+                    <span class="px-2.5 py-1 bg-white rounded-full text-xs font-bold text-gray-700 shadow-sm border border-gray-200">🖤 Badtz-Maru</span>
+                    <span class="px-2.5 py-1 bg-white rounded-full text-xs font-bold text-indigo-400 shadow-sm border border-indigo-100">⭐ Little Twin Stars</span>
+                </div>
+            </div>
+        </header>
 
-    const wheel = document.getElementById("wheel");
-    const spinButton = document.getElementById("spinButton");
-    const claimButton = document.getElementById("claimButton");
-    const ticket = document.getElementById("ticket");
-    const result = document.getElementById("result");
-    const hint = document.getElementById("hint");
+        <!-- Ticket Selection Panel (Requirement 2) -->
+        <section class="kawaii-card p-6 mb-8">
+            <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
+                <h2 class="font-title text-xl text-pink-600 flex items-center gap-2">
+                    <i class="fas fa-ticket-alt text-yellow-400"></i> Select Your Lucky Ticket Code
+                </h2>
+                <span class="text-xs font-bold bg-pink-100 text-pink-600 px-3 py-1 rounded-full">
+                    9 Collector Codes Available
+                </span>
+            </div>
 
-    let chosen = null;
-    let rotation = 0;
+            <!-- Clickable Cards Grid for Ticket Codes -->
+            <div id="ticketCardsContainer" class="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-9 gap-3 mb-4">
+                <!-- Injected via JS -->
+            </div>
 
-    spinButton.addEventListener("click", () => {
-      if (spinButton.disabled) return;
+            <!-- Manual Entry / Selection Input Bar -->
+            <div class="flex flex-col sm:flex-row items-center gap-3 bg-pink-50/80 p-3 rounded-2xl border-2 border-pink-200">
+                <div class="flex items-center gap-2 w-full sm:w-1/2 bg-white px-3 py-2 rounded-xl border border-pink-200">
+                    <i class="fas fa-hashtag text-pink-400"></i>
+                    <select id="ticketSelectDropdown" onchange="syncTicketInput(this.value)" class="w-full bg-transparent font-bold text-gray-700 outline-none text-sm">
+                        <option value="">-- Choose Ticket Code --</option>
+                        <option value="1004">1004 - Hello Kitty (120cm)</option>
+                        <option value="1005">1005 - Cinnamoroll (130cm)</option>
+                        <option value="1006">1006 - My Melody Sweet Heart</option>
+                        <option value="1007">1007 - Kuromi Gothic Velvet</option>
+                        <option value="1046">1046 - Pompompurin Pudding</option>
+                        <option value="1103">1103 - Pochacco Soft Huggable</option>
+                        <option value="1113">1113 - Keroppi Lotus Pond</option>
+                        <option value="1131">1131 - Badtz-Maru Cool Boss</option>
+                        <option value="1132">1132 - Little Twin Stars Pair</option>
+                    </select>
+                </div>
 
-      chosen = entries[Math.floor(Math.random() * entries.length)];
-      spinButton.disabled = true;
-      claimButton.disabled = true;
-      claimButton.textContent = "SPINNING…";
-      hint.textContent = "Round and round the spiral goes!";
+                <div class="flex items-center gap-2 w-full sm:w-1/2">
+                    <input type="number" id="ticketCodeInput" placeholder="Enter Code e.g. 1004" class="w-full bg-white px-4 py-2 rounded-xl border border-pink-200 font-bold text-gray-700 outline-none text-sm">
+                    <button onclick="triggerSprintSpin()" class="bg-sanrio-hotpink hover:bg-pink-600 text-white font-title px-6 py-2 rounded-xl text-sm transition shrink-0 kawaii-btn">
+                        <i class="fas fa-play"></i> SPIN SPIRAL
+                    </button>
+                </div>
+            </div>
+        </section>
 
-      const segmentDegrees = 360 / entries.length;
-      const index = entries.indexOf(chosen);
-      const target = 360 - (index * segmentDegrees + segmentDegrees / 2);
-      rotation += 360 * 6 + target - (rotation % 360);
+        <!-- Sprint Spiral Wheel Canvas & Status (Requirement 3) -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start mb-12">
+            
+            <!-- Canvas Container (7 cols) -->
+            <div class="lg:col-span-7 kawaii-card p-6 flex flex-col items-center relative overflow-hidden">
+                <div class="w-full flex items-center justify-between mb-2 text-xs font-bold text-pink-400 uppercase tracking-widest">
+                    <span><i class="fas fa-circle-notch fa-spin text-yellow-400"></i> Sprint Spiral Track</span>
+                    <span id="spiralStatusBadge" class="bg-green-100 text-green-600 px-2.5 py-0.5 rounded-full">Ready</span>
+                </div>
+                
+                <!-- Spiral Track Canvas -->
+                <div class="relative w-full max-w-[420px] aspect-square my-2 flex items-center justify-center">
+                    <canvas id="spiralCanvas" width="450" height="450" class="w-full h-full cursor-pointer drop-shadow-md rounded-full"></canvas>
+                    
+                    <!-- Center Prize Hub / Spin Overlay -->
+                    <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                        <button id="centerSpinBtn" onclick="triggerSprintSpin()" class="pointer-events-auto w-22 h-22 md:w-24 md:h-24 rounded-full bg-gradient-to-tr from-pink-500 to-pink-300 border-4 border-white text-white font-title text-lg md:text-xl shadow-xl hover:scale-105 active:scale-95 transition-transform flex flex-col items-center justify-center leading-tight">
+                            <span>SPINT!</span>
+                            <i class="fas fa-gift text-yellow-200 text-xs mt-1"></i>
+                        </button>
+                    </div>
+                </div>
 
-      wheel.style.transform = `rotate(${rotation}deg)`;
+                <!-- Action Controls -->
+                <div class="w-full mt-4 flex flex-col sm:flex-row items-center gap-3">
+                    <button onclick="triggerSprintSpin()" class="w-full sm:w-1/2 py-3.5 px-6 rounded-2xl bg-sanrio-hotpink text-white font-title text-lg tracking-wider kawaii-btn flex items-center justify-center gap-2">
+                        <i class="fas fa-bolt"></i> SPRINT DRAW
+                    </button>
+                    <button onclick="pickRandomTicket()" class="w-full sm:w-1/2 py-3.5 px-6 rounded-2xl bg-amber-400 text-white font-title text-lg tracking-wider kawaii-btn-yellow flex items-center justify-center gap-2">
+                        <i class="fas fa-random"></i> RANDOM TICKET
+                    </button>
+                </div>
+            </div>
 
-      window.setTimeout(() => {
-        ticket.textContent = chosen.number;
-        result.innerHTML = `
-          <div class="character">${chosen.icon}</div>
-          <h3>${chosen.name} is your lucky buddy!</h3>
-          <p>A giant ${chosen.color} puff toy is waiting in the prize reveal.</p>
-        `;
-        hint.textContent = `Lucky number ${chosen.number} — prize unlocked!`;
-        claimButton.disabled = false;
-        claimButton.textContent = "🎁 CLAIM PRIZE";
-        spinButton.disabled = false;
-      }, 4300);
-    });
+            <!-- Active Winner & Log Panel (5 cols) -->
+            <div class="lg:col-span-5 space-y-6">
+                
+                <!-- Active Winner Box -->
+                <div class="kawaii-card p-6 text-center relative">
+                    <div class="text-xs font-bold text-purple-500 uppercase tracking-widest mb-1">
+                        <i class="fas fa-award"></i> Selected Ticket Target
+                    </div>
+                    <div id="activeTicketDisplay" class="font-title text-4xl text-pink-500 tracking-wider my-2">
+                        #----
+                    </div>
+                    <p id="activePrizeDisplay" class="text-xs font-bold text-gray-500 bg-purple-50 py-2 px-4 rounded-xl inline-block border border-purple-100">
+                        Choose ticket code or click spin spiral to draw prize!
+                    </p>
+                </div>
 
-    claimButton.addEventListener("click", () => {
-      if (!chosen) return;
+                <!-- Recent Sprint Draw History Log -->
+                <div class="kawaii-card p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-title text-base text-pink-600 flex items-center gap-2">
+                            <i class="fas fa-history"></i> Sprint Draw History
+                        </h3>
+                        <button onclick="clearHistory()" class="text-xs font-bold text-gray-400 hover:text-red-400 transition">
+                            Clear
+                        </button>
+                    </div>
+                    <div id="historyList" class="space-y-2.5 max-h-[300px] overflow-y-auto pr-1">
+                        <!-- History Items injected dynamically -->
+                    </div>
+                </div>
 
-      result.innerHTML = `
-        <div class="character">${chosen.icon} 🧸</div>
-        <h3>🎉 WINNER! 🎉</h3>
-        <p><strong>${chosen.name}</strong> giant puff toy revealed!</p>
-        <p>Lucky ticket: <strong>${chosen.number}</strong></p>
-      `;
-      claimButton.textContent = "✨ PRIZE REVEALED ✨";
-      claimButton.disabled = true;
-    });
-  </script>
+            </div>
+        </div>
+
+        <!-- GIANT SANRIO PUFF TOYS SHOWROOM GALLERY (Requirement 5) -->
+        <section class="mt-8 mb-8">
+            <div class="text-center mb-8">
+                <h2 class="font-title text-2xl md:text-3xl text-pink-600 inline-block bg-white px-8 py-2 rounded-full border-4 border-pink-200 shadow-sm">
+                    🧸 Giant Sanrio Puff Toys Showroom 🧸
+                </h2>
+                <p class="text-xs md:text-sm text-gray-500 mt-2 font-semibold">
+                    Official Jumbo Puff Plushies • 100% Ultra Soft Fluffiness
+                </p>
+            </div>
+
+            <!-- 9 Giant Sanrio Puff Cards Grid -->
+            <div id="prizesGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Injected via JS -->
+            </div>
+        </section>
+
+    </div>
+
+    <!-- WINNER CLAIM MODAL (Requirement 4) -->
+    <div id="claimModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 modal-blur bg-black/40">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 md:p-8 border-4 border-pink-300 shadow-2xl relative animate-float max-h-[92vh] overflow-y-auto">
+            
+            <button onclick="closeModal()" class="absolute top-4 right-4 w-10 h-10 rounded-full bg-pink-100 text-pink-500 font-bold hover:bg-pink-200 transition flex items-center justify-center">
+                <i class="fas fa-times"></i>
+            </button>
+
+            <div class="text-center">
+                <span class="px-4 py-1.5 rounded-full bg-yellow-100 text-yellow-800 font-bold text-xs tracking-wider uppercase inline-block mb-2">
+                    ✨ CONGRATULATIONS! YOU WON! ✨
+                </span>
+                <h3 id="modalPrizeTitle" class="font-title text-2xl md:text-3xl text-pink-500 mb-1">
+                    Giant Puff Toy
+                </h3>
+                <div id="modalTicketBadge" class="text-sm font-bold text-purple-600 mb-2">
+                    Ticket #1004 Verified
+                </div>
+
+                <!-- Giant SVG Plush Preview -->
+                <div id="modalPlushPreview" class="w-44 h-44 mx-auto my-2 flex items-center justify-center rounded-2xl bg-gradient-to-tr from-pink-50 to-purple-50 border-2 border-pink-200 p-3 shadow-inner">
+                    <!-- SVG loaded dynamically -->
+                </div>
+
+                <p id="modalPrizeDesc" class="text-xs text-gray-600 font-semibold mb-4 px-4">
+                    Ultra Soft Fluffy Cushion Pillow
+                </p>
+
+                <!-- Claim Form -->
+                <form id="claimForm" onsubmit="handleClaimSubmit(event)" class="space-y-3 text-left">
+                    <div>
+                        <label class="block text-xs font-bold text-pink-500 uppercase mb-1">Full Name</label>
+                        <input type="text" id="claimName" required placeholder="Hello Kitty Fan" class="w-full px-4 py-2.5 rounded-xl bg-pink-50 border-2 border-pink-200 text-sm font-bold text-gray-700 focus:outline-none focus:border-pink-400">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-pink-500 uppercase mb-1">Phone Number</label>
+                        <input type="tel" id="claimPhone" required placeholder="+1 (555) 019-2834" class="w-full px-4 py-2.5 rounded-xl bg-pink-50 border-2 border-pink-200 text-sm font-bold text-gray-700 focus:outline-none focus:border-pink-400">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-pink-500 uppercase mb-1">Delivery Address</label>
+                        <input type="text" id="claimAddress" required placeholder="Sanrio Town St. #123" class="w-full px-4 py-2.5 rounded-xl bg-pink-50 border-2 border-pink-200 text-sm font-bold text-gray-700 focus:outline-none focus:border-pink-400">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-pink-500 uppercase mb-1">Preferred Ribbon Wrapping</label>
+                        <select id="claimRibbon" class="w-full px-4 py-2.5 rounded-xl bg-pink-50 border-2 border-pink-200 text-sm font-bold text-gray-700 focus:outline-none focus:border-pink-400">
+                            <option value="Pastel Pink Silk Ribbon">🎀 Pastel Pink Silk Ribbon</option>
+                            <option value="Gold Star Sparkle Ribbon">⭐ Gold Star Sparkle Ribbon</option>
+                            <option value="Lavender Velvet Bow">💜 Lavender Velvet Bow</option>
+                            <option value="Classic Sanrio Red Bow">👑 Classic Sanrio Red Bow</option>
+                        </select>
+                    </div>
+
+                    <div class="pt-2">
+                        <button type="submit" class="w-full py-3 rounded-2xl bg-sanrio-hotpink text-white font-title text-lg kawaii-btn">
+                            <i class="fas fa-gift"></i> CLAIM NOW & GENERATE RECEIPT
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Receipt Output Box (Hidden until claimed) -->
+                <div id="receiptBox" class="hidden mt-4 p-4 rounded-2xl bg-pink-50 border-2 border-dashed border-pink-300 text-left">
+                    <div class="flex items-center justify-between text-xs font-bold text-pink-600 mb-2 border-b border-pink-200 pb-2">
+                        <span>SANRIO OFFICIAL CLAIM CERTIFICATE</span>
+                        <span id="receiptDate">2026-10-23</span>
+                    </div>
+                    <div class="space-y-1 text-xs text-gray-600 font-semibold">
+                        <p><strong>Claim ID:</strong> <span id="receiptClaimID" class="text-purple-600 font-bold">#SN-99812</span></p>
+                        <p><strong>Claimant:</strong> <span id="receiptName">-</span></p>
+                        <p><strong>Ticket Code:</strong> <span id="receiptCode">-</span></p>
+                        <p><strong>Prize:</strong> <span id="receiptPrize">-</span></p>
+                        <p><strong>Ribbon Box:</strong> <span id="receiptRibbon">-</span></p>
+                        <p><strong>Status:</strong> <span class="text-green-600 font-bold">VERIFIED & CLAIMED</span></p>
+                    </div>
+                    <button onclick="downloadReceipt()" class="mt-3 w-full py-2 bg-purple-500 hover:bg-purple-600 text-white font-bold text-xs rounded-xl transition flex items-center justify-center gap-2">
+                        <i class="fas fa-download"></i> Save Official Claim Certificate
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // WEB AUDIO SYNTHESIZER FOR KAWAII SFX
+        let audioCtx = null;
+        let soundEnabled = true;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            const btn = document.getElementById('soundToggle');
+            if (soundEnabled) {
+                btn.innerHTML = '<i class="fas fa-volume-up"></i>';
+                btn.classList.remove('text-gray-400');
+                btn.classList.add('text-sanrio-hotpink');
+                playSparkleSound();
+            } else {
+                btn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+                btn.classList.remove('text-sanrio-hotpink');
+                btn.classList.add('text-gray-400');
+            }
+        }
+
+        function playTickSound() {
+            if (!soundEnabled) return;
+            initAudio();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(750 + Math.random() * 200, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.04);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.04);
+        }
+
+        function playSparkleSound() {
+            if (!soundEnabled) return;
+            initAudio();
+            const notes = [523.25, 659.25, 783.99, 1046.50];
+            notes.forEach((freq, idx) => {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime + idx * 0.07);
+                gain.gain.setValueAtTime(0.08, audioCtx.currentTime + idx * 0.07);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + idx * 0.07 + 0.18);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(audioCtx.currentTime + idx * 0.07);
+                osc.stop(audioCtx.currentTime + idx * 0.07 + 0.18);
+            });
+        }
+
+        function playWinFanfare() {
+            if (!soundEnabled) return;
+            initAudio();
+            const notes = [523.25, 659.25, 783.99, 1046.50, 1318.51];
+            notes.forEach((freq, idx) => {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime + idx * 0.1);
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime + idx * 0.1);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + idx * 0.1 + 0.3);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(audioCtx.currentTime + idx * 0.1);
+                osc.stop(audioCtx.currentTime + idx * 0.1 + 0.3);
+            });
+        }
+
+        // EXACT SANRIO PUFF PRIZE DATA MAPPING
+        const GIANT_PUFF_PRIZES = {
+            1004: {
+                id: 1004,
+                name: "Giant Hello Kitty Fluffy Puff Plush",
+                size: "120cm Jumbo Cushion",
+                character: "Hello Kitty",
+                desc: "Classic Red Ribbon Collector Edition Soft Plushie",
+                color: "#FFEBEE",
+                accent: "#E53935",
+                badge: "👑 Red Ribbon Classic",
+                fluff: 100
+            },
+            1005: {
+                id: 1005,
+                name: "Mega Cinnamoroll Cloud Puff Plush",
+                size: "130cm Mega Cushion",
+                character: "Cinnamoroll",
+                desc: "Super Huggable Sky Blue Velvet Ear Pillow",
+                color: "#E0F7FA",
+                accent: "#00ACC1",
+                badge: "☁️ Soft Cloud Puff",
+                fluff: 100
+            },
+            1006: {
+                id: 1006,
+                name: "Deluxe My Melody Sweet Heart Giant Puff",
+                size: "115cm Sweet Heart",
+                character: "My Melody",
+                desc: "Ultra Soft Pink Velvet Hooded Plush Cushion",
+                color: "#FCE4EC",
+                accent: "#EC407A",
+                badge: "🎀 Sweet Pink Velvet",
+                fluff: 100
+            },
+            1007: {
+                id: 1007,
+                name: "Royal Kuromi Gothic Giant Velvet Puff",
+                size: "125cm Gothic Deluxe",
+                character: "Kuromi",
+                desc: "Deluxe Skull Ribbon Lavender Jumbo Cushion",
+                color: "#F3E5F5",
+                accent: "#AB47BC",
+                badge: "💜 Gothic Velvet",
+                fluff: 100
+            },
+            1046: {
+                id: 1046,
+                name: "Super Jumbo Pompompurin Pudding Puff",
+                size: "120cm Pudding Cushion",
+                character: "Pompompurin",
+                desc: "Mega Fluffy Pudding Yellow Brown Beret Plushie",
+                color: "#FFFDE7",
+                accent: "#FBC02D",
+                badge: "🍮 Mega Pudding",
+                fluff: 100
+            },
+            1103: {
+                id: 1103,
+                name: "Pochacco Huggable Soft Giant Puff",
+                size: "110cm Floppy Ear",
+                character: "Pochacco",
+                desc: "Extra Large Puppy Hugging Velvet Cushion",
+                color: "#E8F5E9",
+                accent: "#43A047",
+                badge: "🐶 Jumbo Hugger",
+                fluff: 100
+            },
+            1113: {
+                id: 1113,
+                name: "Keroppi Lotus Pond Giant Round Puff",
+                size: "115cm Froggy Round",
+                character: "Keroppi",
+                desc: "Comfort Velvet Lotus Pond Green Round Pillow",
+                color: "#F1F8E9",
+                accent: "#7CB342",
+                badge: "🐸 Comfort Lotus",
+                fluff: 100
+            },
+            1131: {
+                id: 1131,
+                name: "Badtz-Maru Cool Boss Giant Puff Cushion",
+                size: "120cm Cool Boss",
+                character: "Badtz-Maru",
+                desc: "Spiky Hair Black Velvet Cool Boss Pillow",
+                color: "#ECEFF1",
+                accent: "#37474F",
+                badge: "🖤 Cool Boss",
+                fluff: 100
+            },
+            1132: {
+                id: 1132,
+                name: "Little Twin Stars Dreamy Twin Giant Puff Pair",
+                size: "130cm Dreamy Pair",
+                character: "Little Twin Stars",
+                desc: "Kiki & Lala Pastel Twin Star Soft Pillow Set",
+                color: "#E8EAF6",
+                accent: "#3F51B5",
+                badge: "⭐ Dreamy Twin Pair",
+                fluff: 100
+            }
+        };
+
+        // TRACK CLAIM STATUS IN LOCAL STORAGE
+        let claimedStatus = JSON.parse(localStorage.getItem('sanrio_claimed_tickets') || '{}');
+
+        // SVG CHARACTER ILLUSTRATION GENERATOR
+        function getSanrioCharacterSVG(character, width = 120, height = 120) {
+            switch(character) {
+                case 'Hello Kitty':
+                    return `<svg width="${width}" height="${height}" viewBox="0 0 100 100" fill="none">
+                        <ellipse cx="50" cy="55" rx="30" ry="24" fill="#FFFFFF" stroke="#4A4A4A" stroke-width="2.5"/>
+                        <path d="M 25 38 L 22 25 L 35 32 Z" fill="#FFFFFF" stroke="#4A4A4A" stroke-width="2.5"/>
+                        <path d="M 75 38 L 78 25 L 65 32 Z" fill="#FFFFFF" stroke="#4A4A4A" stroke-width="2.5"/>
+                        <circle cx="38" cy="53" r="2.5" fill="#4A4A4A"/>
+                        <circle cx="62" cy="53" r="2.5" fill="#4A4A4A"/>
+                        <ellipse cx="50" cy="57" rx="2.5" ry="1.8" fill="#FFC107"/>
+                        <line x1="20" y1="50" x2="30" y2="52" stroke="#4A4A4A" stroke-width="2"/>
+                        <line x1="18" y1="56" x2="30" y2="56" stroke="#4A4A4A" stroke-width="2"/>
+                        <line x1="70" y1="52" x2="80" y2="50" stroke="#4A4A4A" stroke-width="2"/>
+                        <line x1="70" y1="56" x2="82" y2="56" stroke="#4A4A4A" stroke-width="2"/>
+                        <circle cx="68" cy="36" r="4" fill="#E53935"/>
+                        <path d="M 68 36 L 58 30 L 60 42 Z" fill="#E53935"/>
+                        <path d="M 68 36 L 78 30 L 76 42 Z" fill="#E53935"/>
+                    </svg>`;
+                case 'Cinnamoroll':
+                    return `<svg width="${width}" height="${height}" viewBox="0 0 100 100" fill="none">
+                        <circle cx="50" cy="55" r="30" fill="#FFFFFF" stroke="#B0E0E6" stroke-width="3"/>
+                        <ellipse cx="20" cy="50" rx="14" ry="18" fill="#FFFFFF" stroke="#B0E0E6" stroke-width="3" transform="rotate(-15 20 50)"/>
+                        <ellipse cx="80" cy="50" rx="14" ry="18" fill="#FFFFFF" stroke="#B0E0E6" stroke-width="3" transform="rotate(15 80 50)"/>
+                        <circle cx="42" cy="52" r="3" fill="#00ACC1"/>
+                        <circle cx="58" cy="52" r="3" fill="#00ACC1"/>
+                        <ellipse cx="36" cy="58" rx="4" ry="2.5" fill="#FFB6C1" opacity="0.6"/>
+                        <ellipse cx="64" cy="58" rx="4" ry="2.5" fill="#FFB6C1" opacity="0.6"/>
+                        <path d="M 47 57 Q 50 60 53 57" stroke="#00ACC1" stroke-width="2" fill="none"/>
+                    </svg>`;
+                case 'My Melody':
+                    return `<svg width="${width}" height="${height}" viewBox="0 0 100 100" fill="none">
+                        <path d="M 25 40 C 25 20, 35 10, 38 35 C 40 10, 60 10, 62 35 C 65 10, 75 20, 75 40 C 75 75, 25 75, 25 40 Z" fill="#FF85A2"/>
+                        <circle cx="50" cy="58" r="22" fill="#FFF5F7"/>
+                        <circle cx="40" cy="55" r="2.5" fill="#4A4A4A"/>
+                        <circle cx="60" cy="55" r="2.5" fill="#4A4A4A"/>
+                        <ellipse cx="50" cy="59" rx="2" ry="1.5" fill="#FFB300"/>
+                        <ellipse cx="34" cy="62" rx="3.5" ry="2" fill="#FF85A2" opacity="0.7"/>
+                        <ellipse cx="66" cy="62" rx="3.5" ry="2" fill="#FF85A2" opacity="0.7"/>
+                        <path d="M 30 38 Q 38 32 42 40 Q 36 46 30 38 Z" fill="#FFFFFF"/>
+                    </svg>`;
+                case 'Kuromi':
+                    return `<svg width="${width}" height="${height}" viewBox="0 0 100 100" fill="none">
+                        <path d="M 20 45 L 30 15 L 45 40 L 55 40 L 70 15 L 80 45 C 85 75, 15 75, 20 45 Z" fill="#3A2E39"/>
+                        <circle cx="50" cy="58" r="22" fill="#FFFFFF"/>
+                        <path d="M 45 54 L 43 58 L 47 58 Z" fill="#3A2E39"/>
+                        <path d="M 55 54 L 53 58 L 57 58 Z" fill="#3A2E39"/>
+                        <ellipse cx="50" cy="60" rx="1.5" ry="1" fill="#AB47BC"/>
+                        <circle cx="50" cy="32" r="5" fill="#FF4081"/>
+                    </svg>`;
+                case 'Pompompurin':
+                    return `<svg width="${width}" height="${height}" viewBox="0 0 100 100" fill="none">
+                        <ellipse cx="50" cy="58" rx="30" ry="24" fill="#FFF59D" stroke="#795548" stroke-width="2.5"/>
+                        <ellipse cx="22" cy="56" rx="8" ry="12" fill="#FFF59D" stroke="#795548" stroke-width="2.5" transform="rotate(20 22 56)"/>
+                        <ellipse cx="78" cy="56" rx="8" ry="12" fill="#FFF59D" stroke="#795548" stroke-width="2.5" transform="rotate(-20 78 56)"/>
+                        <ellipse cx="50" cy="32" rx="14" ry="5" fill="#5D4037"/>
+                        <circle cx="50" cy="26" r="2.5" fill="#5D4037"/>
+                        <circle cx="40" cy="58" r="2.5" fill="#5D4037"/>
+                        <circle cx="60" cy="58" r="2.5" fill="#5D4037"/>
+                        <path d="M 48 63 Q 50 65 52 63" stroke="#5D4037" stroke-width="2" fill="none"/>
+                    </svg>`;
+                case 'Pochacco':
+                    return `<svg width="${width}" height="${height}" viewBox="0 0 100 100" fill="none">
+                        <ellipse cx="50" cy="55" rx="26" ry="24" fill="#FFFFFF" stroke="#37474F" stroke-width="2.5"/>
+                        <path d="M 22 45 C 15 25, 28 20, 30 42 Z" fill="#37474F"/>
+                        <path d="M 78 45 C 85 25, 72 20, 70 42 Z" fill="#37474F"/>
+                        <circle cx="42" cy="53" r="2.5" fill="#37474F"/>
+                        <circle cx="58" cy="53" r="2.5" fill="#37474F"/>
+                        <ellipse cx="50" cy="58" rx="2" ry="1.5" fill="#37474F"/>
+                    </svg>`;
+                case 'Keroppi':
+                    return `<svg width="${width}" height="${height}" viewBox="0 0 100 100" fill="none">
+                        <ellipse cx="50" cy="58" rx="28" ry="22" fill="#AED581" stroke="#33691E" stroke-width="2.5"/>
+                        <circle cx="36" cy="38" r="12" fill="#FFFFFF" stroke="#33691E" stroke-width="2.5"/>
+                        <circle cx="36" cy="38" r="3" fill="#33691E"/>
+                        <circle cx="64" cy="38" r="12" fill="#FFFFFF" stroke="#33691E" stroke-width="2.5"/>
+                        <circle cx="64" cy="38" r="3" fill="#33691E"/>
+                        <path d="M 43 62 V 66 M 57 62 V 66 M 43 66 Q 50 70 57 66" stroke="#33691E" stroke-width="2" fill="none"/>
+                    </svg>`;
+                case 'Badtz-Maru':
+                    return `<svg width="${width}" height="${height}" viewBox="0 0 100 100" fill="none">
+                        <ellipse cx="50" cy="58" rx="28" ry="26" fill="#37474F" stroke="#212121" stroke-width="2.5"/>
+                        <!-- Spiky Hair -->
+                        <path d="M 32 35 L 38 18 L 46 32 L 50 12 L 54 32 L 62 18 L 68 35 Z" fill="#37474F" stroke="#212121" stroke-width="2"/>
+                        <!-- Eyes (cool slant) -->
+                        <ellipse cx="38" cy="52" rx="6" ry="7" fill="#FFFFFF"/>
+                        <circle cx="40" cy="52" r="2.5" fill="#212121"/>
+                        <ellipse cx="62" cy="52" rx="6" ry="7" fill="#FFFFFF"/>
+                        <circle cx="60" cy="52" r="2.5" fill="#212121"/>
+                        <!-- Yellow Beak -->
+                        <ellipse cx="50" cy="62" rx="8" ry="5" fill="#FFC107" stroke="#212121" stroke-width="1.5"/>
+                    </svg>`;
+                case 'Little Twin Stars':
+                    return `<svg width="${width}" height="${height}" viewBox="0 0 100 100" fill="none">
+                        <!-- Kiki (Blue) & Lala (Pink) -->
+                        <circle cx="38" cy="55" r="18" fill="#90CAF9"/>
+                        <circle cx="38" cy="58" r="14" fill="#FFE0B2"/>
+                        <circle cx="34" cy="56" r="1.5" fill="#5D4037"/>
+                        <circle cx="42" cy="56" r="1.5" fill="#5D4037"/>
+                        
+                        <circle cx="62" cy="55" r="18" fill="#F48FB1"/>
+                        <circle cx="62" cy="58" r="14" fill="#FFE0B2"/>
+                        <circle cx="58" cy="56" r="1.5" fill="#5D4037"/>
+                        <circle cx="66" cy="56" r="1.5" fill="#5D4037"/>
+                        <!-- Star Accent -->
+                        <polygon points="50,22 53,30 62,31 55,37 57,46 50,41 43,46 45,37 38,31 47,30" fill="#FFE082"/>
+                    </svg>`;
+                default:
+                    return `<svg width="${width}" height="${height}" viewBox="0 0 100 100"><circle cx="50" cy="50" r="35" fill="#FFD1DC"/></svg>`;
+            }
+        }
+
+        // TICKET CARDS RENDERER (Requirement 2)
+        function renderTicketCards() {
+            const container = document.getElementById('ticketCardsContainer');
+            container.innerHTML = '';
+
+            Object.values(GIANT_PUFF_PRIZES).forEach(item => {
+                const isClaimed = claimedStatus[item.id];
+                const card = document.createElement('button');
+                card.onclick = () => selectTicketCard(item.id);
+                card.className = `p-2.5 rounded-2xl border-2 text-center transition flex flex-col items-center justify-between ${
+                    isClaimed 
+                    ? 'bg-gray-100 border-gray-300 opacity-60' 
+                    : 'bg-white border-pink-200 hover:border-pink-400 hover:shadow-md'
+                }`;
+
+                card.innerHTML = `
+                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${isClaimed ? 'bg-gray-200 text-gray-500' : 'bg-pink-100 text-pink-600'}">
+                        ${isClaimed ? 'CLAIMED' : 'READY'}
+                    </span>
+                    <span class="font-title text-base text-gray-800 my-1">#${item.id}</span>
+                    <span class="text-[9px] font-semibold text-gray-500 truncate w-full">${item.character}</span>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function selectTicketCard(code) {
+            document.getElementById('ticketCodeInput').value = code;
+            document.getElementById('ticketSelectDropdown').value = code;
+            syncTicketInput(code);
+            playSparkleSound();
+        }
+
+        function syncTicketInput(val) {
+            document.getElementById('ticketCodeInput').value = val;
+            if (val && GIANT_PUFF_PRIZES[val]) {
+                const p = GIANT_PUFF_PRIZES[val];
+                document.getElementById('activeTicketDisplay').innerText = `#${p.id}`;
+                document.getElementById('activePrizeDisplay').innerHTML = `<span class="text-pink-600 font-bold">${p.name} (${p.size})</span>`;
+            }
+        }
+
+        // CANVAS SPRINT SPIRAL TRACK (Requirement 3)
+        const canvas = document.getElementById('spiralCanvas');
+        const ctx = canvas.getContext('2d');
+        let spinAngle = 0;
+        let isSpinning = false;
+        let spinSpeed = 0;
+        let targetTicket = null;
+
+        const SPIRAL_ITEMS = Object.values(GIANT_PUFF_PRIZES);
+
+        function drawSpiralTrack() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const cx = canvas.width / 2;
+            const cy = canvas.height / 2;
+
+            ctx.save();
+            ctx.translate(cx, cy);
+            ctx.rotate(spinAngle);
+
+            // Outer ring background
+            ctx.beginPath();
+            ctx.arc(0, 0, 210, 0, Math.PI * 2);
+            ctx.fillStyle = '#FFF0F5';
+            ctx.fill();
+            ctx.lineWidth = 6;
+            ctx.strokeStyle = '#FFB6C1';
+            ctx.stroke();
+
+            // Golden Spiral Track
+            const totalLoops = 3.2;
+            const maxRadius = 190;
+            
+            ctx.beginPath();
+            for (let a = 0; a < Math.PI * 2 * totalLoops; a += 0.05) {
+                const r = (a / (Math.PI * 2 * totalLoops)) * maxRadius;
+                const x = r * Math.cos(a);
+                const y = r * Math.sin(a);
+                if (a === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.lineWidth = 18;
+            ctx.strokeStyle = '#FFE082';
+            ctx.stroke();
+
+            ctx.lineWidth = 10;
+            ctx.strokeStyle = '#FFD54F';
+            ctx.stroke();
+
+            // Place Character Prize Badges along the Spiral Track
+            const itemCount = SPIRAL_ITEMS.length;
+            for (let i = 0; i < itemCount; i++) {
+                const progress = (i + 0.8) / itemCount;
+                const angle = progress * Math.PI * 2 * totalLoops;
+                const r = progress * maxRadius * 0.88 + 20;
+
+                const bx = r * Math.cos(angle);
+                const by = r * Math.sin(angle);
+
+                ctx.save();
+                ctx.translate(bx, by);
+                
+                ctx.beginPath();
+                ctx.arc(0, 0, 18, 0, Math.PI * 2);
+                ctx.fillStyle = SPIRAL_ITEMS[i].color;
+                ctx.fill();
+                ctx.lineWidth = 2.5;
+                ctx.strokeStyle = SPIRAL_ITEMS[i].accent;
+                ctx.stroke();
+
+                // Code text inside node
+                ctx.fillStyle = '#37474F';
+                ctx.font = 'bold 10px Quicksand';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(SPIRAL_ITEMS[i].id, 0, 0);
+
+                ctx.restore();
+            }
+
+            ctx.restore();
+
+            // Top Fixed Indicator Pointer
+            ctx.save();
+            ctx.translate(cx, cy - 205);
+            ctx.beginPath();
+            ctx.moveTo(-14, -10);
+            ctx.lineTo(14, -10);
+            ctx.lineTo(0, 16);
+            ctx.closePath();
+            ctx.fillStyle = '#FF4081';
+            ctx.fill();
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = '#FFFFFF';
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        let lastTickAngle = 0;
+
+        function animateSpin() {
+            if (!isSpinning) return;
+
+            spinAngle += spinSpeed;
+            spinSpeed *= 0.982; // Friction deceleration
+
+            if (Math.abs(spinAngle - lastTickAngle) > 0.25) {
+                playTickSound();
+                lastTickAngle = spinAngle;
+            }
+
+            drawSpiralTrack();
+
+            if (spinSpeed < 0.002) {
+                isSpinning = false;
+                spinSpeed = 0;
+                document.getElementById('spiralStatusBadge').innerText = "Ready";
+                document.getElementById('spiralStatusBadge').className = "bg-green-100 text-green-600 px-2.5 py-0.5 rounded-full";
+                finishSpinDraw();
+            } else {
+                requestAnimationFrame(animateSpin);
+            }
+        }
+
+        function triggerSprintSpin() {
+            if (isSpinning) return;
+            initAudio();
+
+            const inputVal = parseInt(document.getElementById('ticketCodeInput').value);
+            if (inputVal && GIANT_PUFF_PRIZES[inputVal]) {
+                targetTicket = inputVal;
+            } else {
+                const keys = Object.keys(GIANT_PUFF_PRIZES);
+                targetTicket = parseInt(keys[Math.floor(Math.random() * keys.length)]);
+            }
+
+            isSpinning = true;
+            spinSpeed = 0.35 + Math.random() * 0.25;
+
+            document.getElementById('spiralStatusBadge').innerText = "Sprint Active";
+            document.getElementById('spiralStatusBadge').className = "bg-amber-100 text-amber-600 px-2.5 py-0.5 rounded-full";
+
+            animateSpin();
+        }
+
+        function pickRandomTicket() {
+            const keys = Object.keys(GIANT_PUFF_PRIZES);
+            const randCode = keys[Math.floor(Math.random() * keys.length)];
+            selectTicketCard(randCode);
+        }
+
+        function finishSpinDraw() {
+            processDrawResult(targetTicket);
+        }
+
+        let currentWinningItem = null;
+
+        function processDrawResult(ticketCode) {
+            playSparkleSound();
+
+            const item = GIANT_PUFF_PRIZES[ticketCode] || GIANT_PUFF_PRIZES[1004];
+            currentWinningItem = item;
+
+            document.getElementById('activeTicketDisplay').innerText = `#${item.id}`;
+            document.getElementById('activePrizeDisplay').innerHTML = `<span class="text-pink-600 font-bold"><i class="fas fa-crown"></i> ${item.name} (${item.size})</span>`;
+
+            saveHistory(item.id, item.name);
+
+            setTimeout(() => {
+                showWinningModal(item);
+            }, 300);
+        }
+
+        // SHOWROOM GALLERY INITIALIZATION (Requirement 5)
+        function renderShowroom() {
+            const grid = document.getElementById('prizesGrid');
+            grid.innerHTML = '';
+
+            Object.values(GIANT_PUFF_PRIZES).forEach(prize => {
+                const isClaimed = claimedStatus[prize.id];
+                const card = document.createElement('div');
+                card.className = "kawaii-card p-5 flex flex-col items-center text-center relative hover:-translate-y-1 transition duration-300";
+                
+                card.innerHTML = `
+                    <div class="absolute top-3 right-3 text-[10px] font-bold px-2.5 py-1 rounded-full text-white" style="background-color: ${prize.accent}">
+                        ${prize.badge}
+                    </div>
+                    <div class="w-32 h-32 my-2 flex items-center justify-center bg-pink-50/60 rounded-2xl border border-pink-100">
+                        ${getSanrioCharacterSVG(prize.character, 110, 110)}
+                    </div>
+                    <div class="text-xs font-bold text-gray-400">TICKET #${prize.id} • ${prize.size}</div>
+                    <h4 class="font-title text-base text-gray-800 leading-snug my-1">${prize.name}</h4>
+                    <p class="text-xs text-gray-500 font-semibold mb-3">${prize.desc}</p>
+                    
+                    <!-- Fluffiness Meter -->
+                    <div class="w-full bg-pink-100 rounded-full h-2.5 mb-4 overflow-hidden border border-pink-200">
+                        <div class="bg-gradient-to-r from-pink-400 to-purple-400 h-2.5 rounded-full w-full"></div>
+                    </div>
+
+                    <button onclick="selectTicketCard(${prize.id})" class="mt-auto w-full py-2.5 rounded-xl ${isClaimed ? 'bg-gray-200 text-gray-500' : 'bg-pink-100 hover:bg-pink-200 text-pink-600'} font-bold text-xs transition">
+                        ${isClaimed ? 'CLAIMED' : `SELECT TICKET #${prize.id}`}
+                    </button>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // MODAL & CLAIM CERTIFICATE FLOW (Requirement 4)
+        function showWinningModal(item) {
+            playWinFanfare();
+
+            confetti({
+                particleCount: 110,
+                spread: 75,
+                origin: { y: 0.6 }
+            });
+
+            document.getElementById('modalPrizeTitle').innerText = item.name;
+            document.getElementById('modalTicketBadge').innerText = `Ticket #${item.id} • ${item.size}`;
+            document.getElementById('modalPrizeDesc').innerText = `${item.desc} (100% Ultra Soft Fluffiness)`;
+            
+            const previewContainer = document.getElementById('modalPlushPreview');
+            previewContainer.innerHTML = getSanrioCharacterSVG(item.character, 150, 150);
+
+            document.getElementById('claimForm').classList.remove('hidden');
+            document.getElementById('receiptBox').classList.add('hidden');
+            document.getElementById('claimForm').reset();
+
+            document.getElementById('claimModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('claimModal').classList.add('hidden');
+        }
+
+        function handleClaimSubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('claimName').value;
+            const ribbon = document.getElementById('claimRibbon').value;
+
+            // Mark as claimed
+            claimedStatus[currentWinningItem.id] = true;
+            localStorage.setItem('sanrio_claimed_tickets', JSON.stringify(claimedStatus));
+
+            const claimID = "SN-" + Math.floor(10000 + Math.random() * 90000);
+            document.getElementById('receiptClaimID').innerText = `#${claimID}`;
+            document.getElementById('receiptName').innerText = name;
+            document.getElementById('receiptCode').innerText = `#${currentWinningItem.id}`;
+            document.getElementById('receiptPrize').innerText = currentWinningItem.name;
+            document.getElementById('receiptRibbon').innerText = ribbon;
+            document.getElementById('receiptDate').innerText = new Date().toISOString().split('T')[0];
+
+            document.getElementById('claimForm').classList.add('hidden');
+            document.getElementById('receiptBox').classList.remove('hidden');
+
+            renderTicketCards();
+            renderShowroom();
+            playSparkleSound();
+        }
+
+        function downloadReceipt() {
+            const name = document.getElementById('receiptName').innerText;
+            const prize = document.getElementById('receiptPrize').innerText;
+            const code = document.getElementById('receiptCode').innerText;
+            const claimID = document.getElementById('receiptClaimID').innerText;
+            const ribbon = document.getElementById('receiptRibbon').innerText;
+
+            const textContent = `=======================================\n  SANRIO OFFICIAL CLAIM CERTIFICATE \n=======================================\nClaim ID: ${claimID}\nDate: ${new Date().toLocaleDateString()}\nWinner Name: ${name}\nTicket Code: ${code}\nPrize Won: ${prize}\nRibbon Packaging: ${ribbon}\nStatus: VERIFIED & CLAIMED\n\nThank you for playing Sanrio Sprint Spiral! 🌸`;
+            
+            const element = document.createElement("a");
+            const file = new Blob([textContent], {type: 'text/plain'});
+            element.href = URL.createObjectURL(file);
+            element.download = `Sanrio_Certificate_${code}.txt`;
+            document.body.appendChild(element);
+            element.click();
+            document.body.removeChild(element);
+        }
+
+        // DRAW HISTORY MANAGEMENT
+        function saveHistory(code, prizeName) {
+            let history = JSON.parse(localStorage.getItem('sanrio_draw_history') || '[]');
+            history.unshift({
+                code: code,
+                prize: prizeName,
+                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            });
+            if (history.length > 20) history.pop();
+            localStorage.setItem('sanrio_draw_history', JSON.stringify(history));
+            renderHistory();
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('historyList');
+            let history = JSON.parse(localStorage.getItem('sanrio_draw_history') || '[]');
+
+            if (history.length === 0) {
+                list.innerHTML = `<div class="text-xs text-center text-gray-400 py-6">No draws recorded yet. Select a ticket & spin!</div>`;
+                return;
+            }
+
+            list.innerHTML = history.map(item => `
+                <div class="flex items-center justify-between p-2.5 bg-pink-50/60 rounded-xl border border-pink-100 text-xs">
+                    <div class="flex items-center gap-2">
+                        <span class="font-title text-pink-500">#${item.code}</span>
+                        <span class="font-bold text-gray-700 truncate max-w-[170px]">${item.prize}</span>
+                    </div>
+                    <span class="text-[10px] text-gray-400 font-semibold">${item.time}</span>
+                </div>
+            `).join('');
+        }
+
+        function clearHistory() {
+            localStorage.removeItem('sanrio_draw_history');
+            renderHistory();
+        }
+
+        // INITIALIZATION ON LOAD
+        window.onload = function() {
+            drawSpiralTrack();
+            renderTicketCards();
+            renderShowroom();
+            renderHistory();
+        };
+
+        window.addEventListener('resize', () => {
+            drawSpiralTrack();
+        });
+    </script>
 </body>
 </html>
